@@ -12,7 +12,7 @@ namespace SimpleNeuralNetworkLibrary
 
         public List<Connection> OutgoingConnections { get; } = new List<Connection>();
 
-        public double Potential => IncomingConnections.Select(c => c.Activation * c.Weight).Sum();
+        public double Potential => IncomingConnections.Select(c => c.Value).Sum();
 
         public double Activation => Math.Max(Potential, 0.0); // ReLU
 
