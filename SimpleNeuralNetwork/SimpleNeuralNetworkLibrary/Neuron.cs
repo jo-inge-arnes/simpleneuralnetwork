@@ -16,7 +16,7 @@ namespace SimpleNeuralNetworkLibrary
 
         public double Activation => Math.Max(Potential, 0.0); // ReLU
 
-        public double ActivationDerived => Potential < 0.0 ? 0.0 : 1.0; // ReLU derived
+        public double ActivationDerived => Potential > 0.0 ? 1.0 : 0.0; // ReLU derived
 
         public double Bias 
         {
