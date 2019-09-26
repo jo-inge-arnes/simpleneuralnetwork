@@ -4,7 +4,7 @@ namespace SimpleNeuralNetworkLibrary
 {
     public class Connection
     {
-        private static Random _random = new Random();
+        private static readonly Random _random = new Random();
 
         private bool _isBias;
         private double _activation;
