@@ -18,6 +18,12 @@ namespace SimpleNeuralNetworkLibrary
 
         public double ActivationDerived => Potential < 0.0 ? 0.0 : 1.0; // ReLU derived
 
+        public double Bias 
+        {
+            get { return IncomingConnections[0].Weight; } 
+            set { IncomingConnections[0].Weight = value; } 
+        }
+
         public Neuron()
         {
             // The first incoming connection is always the bias/threshold
