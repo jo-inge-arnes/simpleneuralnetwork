@@ -17,15 +17,18 @@ namespace SimpleNeuralNetworkConsoleApp
                 @"E:\data\t10k-images-idx3-ubyte.gz",
                 @"E:\data\t10k-labels-idx1-ubyte.gz");
 
+            var dimensions = 28 * 28;
+            var classes = 10;
+
             var config = new ArtificialNeuralNetworkConfig
             {
-                InputDimensions = 9,
-                NeuronCounts = new int[] { 5, 7, 2}
+                InputDimensions = dimensions,
+                NeuronCounts = new int[] { 128, 128, classes }
             };
 
             var ann = new ArtificialNeuralNetwork(config);
 
-            var dataPoint = new double[] { 0.1, 0.2, 0.3, 0.4, 0.5 };
+            var dataPoint = dataSource.TrainingData.First().AsDouble().Cast<double>().ToArray();
             var result = ann.Classify(dataPoint);
         }
     }
