@@ -17,13 +17,13 @@ namespace SimpleNeuralNetworkConsoleApp
                 @"E:\data\t10k-images-idx3-ubyte.gz",
                 @"E:\data\t10k-labels-idx1-ubyte.gz");
 
-            var dimensions = 28 * 28;
-            var classes = 10;
+            var numDimensions = 28 * 28;
+            var numClasses = 10;
 
             var config = new ArtificialNeuralNetworkConfig
             {
-                InputDimensions = dimensions,
-                NeuronCounts = new int[] { 128, 128, classes }
+                InputDimensions = numDimensions,
+                NeuronCounts = new int[] { 128, 128, numClasses }
             };
 
             var ann = new ArtificialNeuralNetwork(config);
