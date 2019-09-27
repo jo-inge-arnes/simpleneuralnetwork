@@ -49,5 +49,15 @@ namespace SimpleNeuralNetworkLibrary
         {
             Neurons.ForEach(neuron => neuron.OutgoingConnections.Add(new Connection { Sender = neuron }));
         }
+
+        /// <summary>
+        /// Gets all activation values from all neurons in the layer.
+        /// Returns the values as an array of doubles.
+        /// </summary>
+        /// <returns>An array of the values</returns>
+        public double[] AllOutputs()
+        {
+            return Neurons.SelectMany(n => n.OutgoingConnections).Select(c => c.Activation).ToArray();
+        }
     }
 }
