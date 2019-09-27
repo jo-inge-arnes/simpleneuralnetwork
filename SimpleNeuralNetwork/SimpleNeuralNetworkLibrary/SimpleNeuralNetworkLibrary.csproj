@@ -43,6 +43,7 @@
     <Compile Include="ArtificialNeuralNetwork.cs" />
     <Compile Include="ArtificialNeuralNetworkConfig.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="IDataSource.cs" />
     <Compile Include="Layer.cs" />
     <Compile Include="Neuron.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

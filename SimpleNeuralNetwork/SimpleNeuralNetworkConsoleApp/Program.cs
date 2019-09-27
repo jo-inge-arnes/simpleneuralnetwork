@@ -11,6 +11,12 @@ namespace SimpleNeuralNetworkConsoleApp
     {
         static void Main(string[] args)
         {
+            var dataSource = new MnistDataSource(
+                @"E:\data\train-images-idx3-ubyte.gz",
+                @"E:\data\train-labels-idx1-ubyte.gz",
+                @"E:\data\t10k-images-idx3-ubyte.gz",
+                @"E:\data\t10k-labels-idx1-ubyte.gz");
+
             var config = new ArtificialNeuralNetworkConfig
             {
                 InputDimensions = 9,
