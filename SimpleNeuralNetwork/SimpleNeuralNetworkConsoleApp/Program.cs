@@ -37,6 +37,8 @@ namespace SimpleNeuralNetworkConsoleApp
             ann.Train(dataSource, 100);
 
             Console.WriteLine("Finished training");
+
+            Console.ReadLine();
         }
     }
 }

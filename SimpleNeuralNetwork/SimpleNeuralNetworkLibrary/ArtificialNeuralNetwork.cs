@@ -40,20 +40,20 @@ namespace SimpleNeuralNetworkLibrary
 
             for (int i = 0; i < epochs; i++)
             {
-                Debug.WriteLine("Epoch: {0}", i);
-                Debug.WriteLine("Backpropagating...");
+                Console.WriteLine("Epoch: {0}", i);
+                Console.WriteLine("Backpropagating...");
 
                 Backpropagate(dataSource);
 
-                Debug.WriteLine("Updating weights...");
+                Console.WriteLine("Updating weights...");
 
                 UpdateWeights();
 
-                Debug.WriteLine("Recalculating total cost...");
+                Console.WriteLine("Recalculating total cost...");
 
                 RecalculateTotalCost(dataSource);
 
-                Debug.WriteLine("Total cost is now: {0}", TotalCost);
+                Console.WriteLine("Total cost is now: {0}", TotalCost);
             }
         }
 
@@ -166,10 +166,10 @@ namespace SimpleNeuralNetworkLibrary
 
             for (int i = 0; i < estimated.Length; i++)
             {
-                error += 0.5 * Math.Pow(e(label[i], estimated[i]), 2);
+                error += Math.Pow(e(label[i], estimated[i]), 2);
             }
 
-            return error;
+            return 0.5 * error;
         }
 
         /// <summary>
