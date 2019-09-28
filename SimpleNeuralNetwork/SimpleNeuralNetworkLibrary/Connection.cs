@@ -7,7 +7,7 @@ namespace SimpleNeuralNetworkLibrary
         private static readonly Random _random = new Random();
 
         private bool _isBias;
-        private double _activation;
+        private double _activation = 1.0;
 
         public bool IsBias
         {
@@ -23,8 +23,6 @@ namespace SimpleNeuralNetworkLibrary
                 }
             }
         }
-
-        public double Weight { get; set; } = _random.NextDouble();
 
         public double Activation
         {
@@ -42,8 +40,17 @@ namespace SimpleNeuralNetworkLibrary
             }
         }
 
-        public double Value => Weight * Activation;
+        public double Weight { get; set; } = _random.NextDouble();
+
+        /// <summary>
+        /// Last calculated error signal
+        /// </summary>
+        public double ErrorSignal { get; set; }
+        
         public Neuron Sender { get; set; }
+
         public Neuron Receiver { get; set; }
+
+        public double WeightGradient { get; internal set; }
     }
 }

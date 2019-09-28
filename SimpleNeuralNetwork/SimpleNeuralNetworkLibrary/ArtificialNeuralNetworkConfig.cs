@@ -8,6 +8,11 @@
         public int InputDimensions { get; set; }
 
         /// <summary>
+        /// Step size for gradient descent/backpropagation
+        /// </summary>
+        public double Mu { get; set; }
+
+        /// <summary>
         /// An array with one entry per layer with the
         /// wanted number of neurons for the layer.
         /// Note that the number of neurons in the

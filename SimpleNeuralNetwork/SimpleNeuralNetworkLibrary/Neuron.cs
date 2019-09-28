@@ -12,12 +12,18 @@ namespace SimpleNeuralNetworkLibrary
 
         public List<Connection> OutgoingConnections { get; } = new List<Connection>();
 
-        public double Potential => IncomingConnections.Select(c => c.Value).Sum();
+        public double Potential => IncomingConnections.Select(c => c.Weight * c.Activation).Sum();
 
-        public double Activation => Math.Max(Potential, 0.0); // ReLU
+        public double Activation => F(Potential); // Math.Max(Potential, 0.0); // ReLU
 
-        public double ActivationDerived => Potential > 0.0 ? 1.0 : 0.0; // ReLU derived
+        public double ActivationDerived => F(Potential) * (1 - F(Potential)); // Potential > 0.0 ? 1.0 : 0.0; // ReLU derived
 
+
+        private double F(double x)
+        {
+            return (1.0 / (1.0 + Math.Exp(-x)));
+        }
+        
         public double Bias 
         {
             get { return IncomingConnections[0].Weight; } 

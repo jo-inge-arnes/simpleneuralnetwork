@@ -17,6 +17,7 @@ namespace SimpleNeuralNetworkConsoleApp
             var dataSource = new MnistDataSource(
                 @"E:\data\train-images-idx3-ubyte.gz",
                 @"E:\data\train-labels-idx1-ubyte.gz");
+
             Console.WriteLine("Finished reading data");
 
             var numDimensions = 28 * 28;
@@ -25,14 +26,15 @@ namespace SimpleNeuralNetworkConsoleApp
             var config = new ArtificialNeuralNetworkConfig
             {
                 InputDimensions = numDimensions,
-                NeuronCounts = new int[] { 128, 128, numClasses }
+                NeuronCounts = new int[] { 128, 128, numClasses },
+                Mu = 0.1
             };
 
             var ann = new ArtificialNeuralNetwork(config);
 
             Console.WriteLine("Training...");
 
-            ann.Train(dataSource);
+            ann.Train(dataSource, 100);
 
             Console.WriteLine("Finished training");
         }
