@@ -1,4 +1,5 @@
-﻿using SimpleNeuralNetworkLibrary;
+﻿using MathNet.Numerics.Distributions;
+using SimpleNeuralNetworkLibrary;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,29 +15,45 @@ namespace SimpleNeuralNetworkConsoleApp
         {
             var dataSource = InitDataSource();
 
-            var numDimensions = 28 * 28;
+            var numDimensions = 28*28;
             var numClasses = 10;
 
             var config = new ArtificialNeuralNetworkConfig
             {
                 InputDimensions = numDimensions,
-                NeuronCounts = new int[] { 32, 32, 32, 32, numClasses },
+                NeuronCounts = new int[] { numDimensions, numDimensions, numClasses },
                 Mu = 0.01
             };
 
             var ann = new ArtificialNeuralNetwork(config);
 
-            ann.Train(dataSource, 100);
+            ann.Train(dataSource, 500);
         }
 
         static IDataSource InitDataSource()
         {
             //var dataSource = new ListDataSource();
 
-            //AddDataPoint(dataSource, new double[] { 1.0, 0.0, 0.0 }, new double[] { 1.0, 2.0 });
-            //AddDataPoint(dataSource, new double[] { 0.0, 1.0, 0.0 }, new double[] { 2.0, 3.0 });
-            //AddDataPoint(dataSource, new double[] { 0.0, 0.0, 1.0 }, new double[] { 3.0, 4.0 });
+            //double[] omega1 = { 1.0, 0.0, 0.0 };
+            //double[] omega2 = { 0.0, 1.0, 0.0 };
+            //double[] omega3 = { 0.0, 0.0, 1.0 };
 
+            //var normal1 = new Normal(1.0, 0.5);
+            //var normal2 = new Normal(5.0, 0.5);
+            //var normal3 = new Normal(10.0, 0.5);
+
+            //Random rnd = new Random();
+
+            //for (int i = 0; i < 1000; i++)
+            //{
+            //    var selectedOmega = rnd.Next(0, 3);
+            //    if (selectedOmega == 0)
+            //        AddDataPoint(dataSource, omega1, new double[] { normal1.Sample(), normal1.Sample() });
+            //    else if(selectedOmega == 1) 
+            //        AddDataPoint(dataSource, omega2, new double[] { normal2.Sample(), normal2.Sample() });
+            //    else
+            //        AddDataPoint(dataSource, omega3, new double[] { normal3.Sample(), normal3.Sample() });
+            //}
 
             var dataSource = new MnistDataSource(
                 @"E:\data\train-images-idx3-ubyte.gz",
