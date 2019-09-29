@@ -50,7 +50,5 @@ namespace SimpleNeuralNetworkLibrary
         public Neuron Sender { get; set; }
 
         public Neuron Receiver { get; set; }
-
-        public double WeightGradient { get; internal set; }
     }
 }

@@ -14,11 +14,13 @@ namespace SimpleNeuralNetworkLibrary
 
         public double Potential => IncomingConnections.Select(c => c.Weight * c.Activation).Sum();
 
-        private const double a = 100.0;
+        private const double a = 1.0;
 
-        public double Activation => F(Potential); // Math.Max(Potential, 0.0); // ReLU
+        //public double Activation => F(Potential); // Sigmoid 
+        public double Activation => Math.Max(Potential, 0.0); // ReLU
 
-        public double ActivationDerived => a * F(Potential) * (1 - F(Potential)); // Potential > 0.0 ? 1.0 : 0.0; // ReLU derived
+        //public double ActivationDerived => a * F(Potential) * (1 - F(Potential)); // Sigmoid
+        public double ActivationDerived => Potential < 0.0 ? 0.0 : 1.0; // ReLU derived. Note that also derived of 0 is 1.
 
         private double F(double x)
         {
