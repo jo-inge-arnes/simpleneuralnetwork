@@ -65,7 +65,7 @@ namespace SimpleNeuralNetworkLibrary
                 {
                     foreach (var incomingConnection in neuron.IncomingConnections)
                     {
-                        incomingConnection.Weight -= (Mu * incomingConnection.WeightGradient);
+                        incomingConnection.Weight += (Mu * incomingConnection.WeightGradient);
                         incomingConnection.WeightGradient = 0.0;
                     }
                 }
