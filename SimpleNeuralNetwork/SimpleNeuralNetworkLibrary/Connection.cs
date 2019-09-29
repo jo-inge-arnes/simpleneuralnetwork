@@ -7,7 +7,7 @@ namespace SimpleNeuralNetworkLibrary
         private static readonly Random _random = new Random();
 
         private bool _isBias;
-        private double _activation = 1.0;
+        private double _activation;
 
         public bool IsBias
         {
