@@ -14,14 +14,15 @@ namespace SimpleNeuralNetworkLibrary
 
         public double Potential => IncomingConnections.Select(c => c.Weight * c.Activation).Sum();
 
+        private const double a = 100.0;
+
         public double Activation => F(Potential); // Math.Max(Potential, 0.0); // ReLU
 
-        public double ActivationDerived => F(Potential) * (1 - F(Potential)); // Potential > 0.0 ? 1.0 : 0.0; // ReLU derived
-
+        public double ActivationDerived => a * F(Potential) * (1 - F(Potential)); // Potential > 0.0 ? 1.0 : 0.0; // ReLU derived
 
         private double F(double x)
         {
-            return (1.0 / (1.0 + Math.Exp(-x)));
+            return (1.0 / (1.0 + Math.Exp(-a*x)));
         }
         
         public double Bias 
