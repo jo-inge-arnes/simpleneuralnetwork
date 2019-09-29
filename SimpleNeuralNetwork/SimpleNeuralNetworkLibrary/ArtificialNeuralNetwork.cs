@@ -10,6 +10,7 @@ namespace SimpleNeuralNetworkLibrary
     public class ArtificialNeuralNetwork
     {
         private double totalCost;
+        private int N;
 
         /// <summary>
         /// Step size for gradient descent/backpropagation
@@ -65,7 +66,7 @@ namespace SimpleNeuralNetworkLibrary
                 {
                     foreach (var incomingConnection in neuron.IncomingConnections)
                     {
-                        incomingConnection.Weight += (Mu * incomingConnection.WeightGradient);
+                        incomingConnection.Weight -= (Mu * incomingConnection.WeightGradient) / N;
                         incomingConnection.WeightGradient = 0.0;
                     }
                 }
@@ -74,8 +75,12 @@ namespace SimpleNeuralNetworkLibrary
 
         private void Backpropagate(IDataSource dataSource)
         {
+            N = 0;
+
             foreach (var dataPoint in dataSource.DataPoints)
             {
+                N++;
+
                 // Updates all values in the ANN to the datapoint
                 Classify(dataPoint);
 
@@ -150,7 +155,7 @@ namespace SimpleNeuralNetworkLibrary
 
         private double e(double label, double estimated)
         {
-            return label - estimated;
+            return estimated - label;
         }
 
         /// <summary>
