@@ -27,7 +27,7 @@ namespace SimpleNeuralNetworkConsoleApp
             {
                 InputDimensions = numDimensions,
                 NeuronCounts = new int[] { 128, 128, numClasses },
-                Mu = 0.1
+                Mu = 0.01
             };
 
             var ann = new ArtificialNeuralNetwork(config);
