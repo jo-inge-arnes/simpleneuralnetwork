@@ -150,7 +150,7 @@ namespace SimpleNeuralNetworkLibrary
 
         private double e(double label, double estimated)
         {
-            return estimated - label;
+            return label - estimated;
         }
 
         /// <summary>
