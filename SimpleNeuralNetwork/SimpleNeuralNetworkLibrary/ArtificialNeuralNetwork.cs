@@ -11,7 +11,6 @@ namespace SimpleNeuralNetworkLibrary
     public class ArtificialNeuralNetwork
     {
         private double _averageCost;
-        private int _numLayers;
 
         /// <summary>
         /// Step size for gradient descent/backpropagation
@@ -103,12 +102,8 @@ namespace SimpleNeuralNetworkLibrary
 
         private void Backpropagate(IDataSource dataSource)
         {
-            _numLayers = 0;
-
             foreach (var dataPoint in dataSource.DataPoints)
             {
-                _numLayers++;
-
                 // Updates all values in the ANN to the datapoint
                 Classify(dataPoint);
 
@@ -133,7 +128,7 @@ namespace SimpleNeuralNetworkLibrary
                             var estimated = neuron.OutgoingConnections[0].Activation;
                             var expected = dataPoint.Label[j];
 
-                            // Note: The -1.0 is because it's a partial derivative og squared error.
+                            // Note: The -1.0 is because it's a partial derivative of squared error.
                             // (Some notations put this minus outside the delta-sign for error signal, others do not.)
                             errorSignal = -1.0 * DifferenceError(expected, estimated) * neuron.ActivationDerived;
                         }
