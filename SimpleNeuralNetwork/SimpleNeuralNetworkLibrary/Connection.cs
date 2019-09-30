@@ -40,7 +40,7 @@ namespace SimpleNeuralNetworkLibrary
             }
         }
 
-        public double Weight { get; set; } = _random.NextDouble();
+        public double Weight { get; set; } = _random.NextDouble() / 10.0;
 
         /// <summary>
         /// Last calculated error signal
