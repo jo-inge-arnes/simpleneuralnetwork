@@ -2,6 +2,8 @@
 {
     public class ArtificialNeuralNetworkConfig
     {
+        public ActivationTypeEnum ActivationType { get; set; }
+
         /// <summary>
         /// The number of dimensions in the input data
         /// </summary>
@@ -10,7 +12,7 @@
         /// <summary>
         /// Step size for gradient descent/backpropagation
         /// </summary>
-        public double Mu { get; set; }
+        public double LearningRate { get; set; }
 
         /// <summary>
         /// An array with one entry per layer with the
@@ -20,5 +22,12 @@
         /// in the output.
         /// </summary>
         public int[] NeuronCounts { get; set; } 
+    }
+
+    public enum ActivationTypeEnum
+    {
+        NotSet,
+        ReLU,
+        Sigmoid
     }
 }

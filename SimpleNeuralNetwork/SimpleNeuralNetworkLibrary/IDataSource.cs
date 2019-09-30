@@ -8,6 +8,9 @@ namespace SimpleNeuralNetworkLibrary
 {
     public interface IDataSource
     {
+        int InputDimensions { get; set; }
+        int OutputDimensions { get; set; }
+
         IEnumerable<DataPoint> DataPoints { get; }
     }
 }

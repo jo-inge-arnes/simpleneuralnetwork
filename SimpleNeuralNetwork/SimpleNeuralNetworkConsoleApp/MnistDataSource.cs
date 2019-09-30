@@ -11,13 +11,16 @@ namespace SimpleNeuralNetworkConsoleApp
 {
     public class MnistDataSource : IDataSource
     {
-        private List<DataPoint> dataPoints;
+        private List<DataPoint> _dataPoints;
+
+        public int InputDimensions { get; set; }
+        public int OutputDimensions { get; set; }
 
         public MnistDataSource(string imagesGzPath, string labelsGzPath)
         {
             var mnistData = FileReaderMNIST.LoadImagesAndLables(labelsGzPath, imagesGzPath);
-
-            dataPoints = mnistData.Select(testCase =>
+           
+            _dataPoints = mnistData.Select(testCase =>
                 new DataPoint { Value = ConvertImage(testCase.Image), Label = ConvertLabel(testCase.Label) }).ToList();
         }
 
@@ -25,14 +28,13 @@ namespace SimpleNeuralNetworkConsoleApp
         {
             get
             {
-                return dataPoints.AsEnumerable();
+                return _dataPoints.AsEnumerable();
             }
         }
 
-
         private double[] ConvertImage(byte[,] image)
         {
-            return image.Cast<byte>().Select(v => (double)v).ToArray();
+            return image.Cast<byte>().Select(v => v / 255.0).ToArray();
         }
 
         private double[] ConvertLabel(byte label)

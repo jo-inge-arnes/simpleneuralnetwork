@@ -4,8 +4,6 @@ namespace SimpleNeuralNetworkLibrary
 {
     public class Connection
     {
-        private static readonly Random _random = new Random();
-
         private bool _isBias;
         private double _activation;
 
@@ -40,7 +38,7 @@ namespace SimpleNeuralNetworkLibrary
             }
         }
 
-        public double Weight { get; set; } = _random.NextDouble() / 10.0;
+        public double Weight { get; set; }
 
         /// <summary>
         /// Last calculated error signal

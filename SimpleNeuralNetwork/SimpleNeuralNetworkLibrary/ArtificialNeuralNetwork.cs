@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MathNet.Numerics.Distributions;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,21 +10,21 @@ namespace SimpleNeuralNetworkLibrary
 {
     public class ArtificialNeuralNetwork
     {
-        private double averageCost;
-        private int N;
+        private double _averageCost;
+        private int _numLayers;
 
         /// <summary>
         /// Step size for gradient descent/backpropagation
         /// </summary>
-        public double Mu { get; set; }
+        public double LearningRate { get; set; }
 
         public List<Layer> Layers { get; } = new List<Layer>();
 
-        public double AverageCost => averageCost;
+        public double AverageCost => _averageCost;
 
         public ArtificialNeuralNetwork(ArtificialNeuralNetworkConfig config)
         {
-            Mu = config.Mu;
+            LearningRate = config.LearningRate;
 
             foreach (int neuronCount in config.NeuronCounts)
             {
@@ -33,6 +34,52 @@ namespace SimpleNeuralNetworkLibrary
 
             Layers[0].CreateInputConnections(config.InputDimensions);
             Layers[Layers.Count - 1].CreateOutputConnections();
+
+            InitWeights(config);
+        }
+
+        private void InitWeights(ArtificialNeuralNetworkConfig config)
+        {
+            switch (config.ActivationType)
+            {
+                case ActivationTypeEnum.ReLU:
+                    InitWeightsReLU();
+                    break;
+
+                default:
+                    InitWeightsDefault();
+                    break;
+            }
+        }
+
+        private void InitWeightsDefault()
+        {
+            var normal = new Normal();
+
+            foreach (Layer layer in Layers)
+                foreach (var neuron in layer.Neurons)
+                    foreach (var connection in neuron.IncomingConnections)
+                        connection.Weight = normal.Sample();
+        }
+
+        private void InitWeightsReLU()
+        {
+            var normal = new Normal();
+
+            foreach (Layer layer in Layers)
+                foreach (var neuron in layer.Neurons)
+                    foreach (var connection in neuron.IncomingConnections)
+                    {
+                        if (!connection.IsBias)
+                        {
+                            double fanIn = layer.Neurons.Count * neuron.IncomingConnections.Count; // Fully connected
+                            connection.Weight = normal.Sample() * Math.Sqrt(2.0 / fanIn);
+                        }
+                        else
+                        {
+                            connection.Weight = 1.0E-10;
+                        }
+                    }
         }
 
         public void Train(IDataSource dataSource, int epochs)
@@ -54,31 +101,17 @@ namespace SimpleNeuralNetworkLibrary
             }
         }
 
-        private void UpdateWeightsOnline()
-        {
-            foreach (var layer in Layers)
-            {
-                foreach (var neuron in layer.Neurons)
-                {
-                    foreach (var incomingConnection in neuron.IncomingConnections)
-                    {
-                        incomingConnection.Weight -= Mu * incomingConnection.ErrorSignal * incomingConnection.Activation;
-                    }
-                }
-            }
-        }
-
         private void Backpropagate(IDataSource dataSource)
         {
-            N = 0;
+            _numLayers = 0;
 
             foreach (var dataPoint in dataSource.DataPoints)
             {
-                N++;
+                _numLayers++;
 
                 // Updates all values in the ANN to the datapoint
                 Classify(dataPoint);
-                
+
                 for (int r = Layers.Count - 1; r >= 0; r--)
                 {
                     int numNeuronsInLayer = Layers[r].Neurons.Count;
@@ -97,10 +130,12 @@ namespace SimpleNeuralNetworkLibrary
 
                             // The last layer only has one outgoing connection per neuron, 
                             // which is the estimated output.
-                            var estimated = neuron.OutgoingConnections[0].Activation;// * neuron.OutgoingConnections[0].Weight;
+                            var estimated = neuron.OutgoingConnections[0].Activation;
                             var expected = dataPoint.Label[j];
 
-                            errorSignal = DifferenceError(expected, estimated) * neuron.ActivationDerived;
+                            // Note: The -1.0 is because it's a partial derivative og squared error.
+                            // (Some notations put this minus outside the delta-sign for error signal, others do not.)
+                            errorSignal = -1.0 * DifferenceError(expected, estimated) * neuron.ActivationDerived;
                         }
                         else
                         {
@@ -108,14 +143,14 @@ namespace SimpleNeuralNetworkLibrary
                             // Because we are working backwards through the layers, this has already been calculated in
                             // the previous step.
 
-                            double e = 0.0;
+                            double sumWeightedErrors = 0.0;
 
                             foreach (var outgoingConnection in neuron.OutgoingConnections)
                             {
-                                e += outgoingConnection.ErrorSignal * outgoingConnection.Weight;
+                                sumWeightedErrors += outgoingConnection.ErrorSignal * outgoingConnection.Weight;
                             }
 
-                            errorSignal = e * neuron.ActivationDerived;
+                            errorSignal = sumWeightedErrors * neuron.ActivationDerived;
                         }
 
                         // Make error signal available to previous layer (backpropagate)
@@ -130,14 +165,28 @@ namespace SimpleNeuralNetworkLibrary
             }
         }
 
+        private void UpdateWeightsOnline()
+        {
+            foreach (var layer in Layers)
+            {
+                foreach (var neuron in layer.Neurons)
+                {
+                    foreach (var incomingConnection in neuron.IncomingConnections)
+                    {
+                        incomingConnection.Weight -= LearningRate * incomingConnection.ErrorSignal * incomingConnection.Activation;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Calculates average error cost for network from all training data points
         /// </summary>
         /// <param name="dataSource"></param>
         /// <returns>The cost</returns>
-        private void RecalculateCost(IDataSource dataSource)
+        public void RecalculateCost(IDataSource dataSource)
         {
-            averageCost = 0.0;
+            _averageCost = 0.0;
 
             int numDataPoints = 0;
 
@@ -147,15 +196,15 @@ namespace SimpleNeuralNetworkLibrary
 
                 var estimated = Classify(dataPoint);
 
-                averageCost += CalculateEpsilon(dataPoint.Label, estimated);
+                _averageCost += SumSquaredErrors(dataPoint.Label, estimated);
             }
 
-            averageCost /= numDataPoints;
+            _averageCost /= numDataPoints;
         }
 
-        private double DifferenceError(double label, double estimated)
+        private double DifferenceError(double target, double output)
         {
-            return estimated - label;
+            return target - output;
         }
 
         /// <summary>
@@ -163,18 +212,18 @@ namespace SimpleNeuralNetworkLibrary
         /// </summary>
         /// <param name="dp">The data point</param>
         /// <returns>The error</returns>
-        private double CalculateEpsilon(double[] label, double[] estimated)
+        private double SumSquaredErrors(double[] label, double[] estimated)
         {
             // Using sum of squared errors
 
-            var epsilon = 0.0;
+            var sumSquaredErrors = 0.0;
 
             for (int i = 0; i < estimated.Length; i++)
             {
-                epsilon += Math.Pow(DifferenceError(label[i], estimated[i]), 2);
+                sumSquaredErrors += 0.5 * Math.Pow(DifferenceError(label[i], estimated[i]), 2);
             }
 
-            return 0.5 * epsilon;
+            return sumSquaredErrors;
         }
 
         /// <summary>
