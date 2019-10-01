@@ -2,7 +2,7 @@
 {
     public class ArtificialNeuralNetworkConfig
     {
-        public ActivationTypeEnum ActivationType { get; set; }
+        public ActivationTypes ActivationType { get; set; }
 
         /// <summary>
         /// The number of dimensions in the input data
@@ -24,7 +24,7 @@
         public int[] NeuronCounts { get; set; } 
     }
 
-    public enum ActivationTypeEnum
+    public enum ActivationTypes
     {
         NotSet,
         ReLU,

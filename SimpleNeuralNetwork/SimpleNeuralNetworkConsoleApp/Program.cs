@@ -13,7 +13,7 @@ namespace SimpleNeuralNetworkConsoleApp
     {
         static void Main(string[] args)
         {
-            // var dataSource = InitSingleValueDataSource();
+            //var dataSource = InitSingleValueDataSource();
             var dataSource = InitMnistDataSource();
             // var dataSource = InitListDataSource();
 
@@ -22,18 +22,22 @@ namespace SimpleNeuralNetworkConsoleApp
                 InputDimensions = dataSource.InputDimensions,
                 NeuronCounts = new int[] { 32, dataSource.OutputDimensions },
                 LearningRate = 0.001,
-                ActivationType = ActivationTypeEnum.ReLU
+                ActivationType = ActivationTypes.ReLU
             };
 
             var ann = new ArtificialNeuralNetwork(config);
 
             //ManuallyInitWeightsForSingleValueSource(ann);
 
+            //var fileName = Guid.NewGuid().ToString() + "-Testing.ann";
+            //ann.Save(fileName);
+            //var ann2 = ArtificialNeuralNetwork.Load(fileName);
+
             //var initialResult = ann.Classify(dataSource.DataPointList[0]);
             //ann.RecalculateCost(dataSource);
             //Console.WriteLine("Initial cost: {0}", ann.AverageCost);
 
-            ann.Train(dataSource, 500);
+            ann.Train(dataSource, 50);
         }
 
         static ListDataSource InitSingleValueDataSource()

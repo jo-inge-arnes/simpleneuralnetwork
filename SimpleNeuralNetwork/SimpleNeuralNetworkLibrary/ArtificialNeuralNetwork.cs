@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +13,7 @@ namespace SimpleNeuralNetworkLibrary
     public class ArtificialNeuralNetwork
     {
         private double _averageCost;
+        private ArtificialNeuralNetworkConfig _config;
 
         /// <summary>
         /// Step size for gradient descent/backpropagation
@@ -21,8 +24,10 @@ namespace SimpleNeuralNetworkLibrary
 
         public double AverageCost => _averageCost;
 
+
         public ArtificialNeuralNetwork(ArtificialNeuralNetworkConfig config)
         {
+            _config = config;
             LearningRate = config.LearningRate;
 
             foreach (int neuronCount in config.NeuronCounts)
@@ -41,7 +46,7 @@ namespace SimpleNeuralNetworkLibrary
         {
             switch (config.ActivationType)
             {
-                case ActivationTypeEnum.ReLU:
+                case ActivationTypes.ReLU:
                     InitWeightsReLU();
                     break;
 
@@ -85,6 +90,8 @@ namespace SimpleNeuralNetworkLibrary
         {
             // TODO: add support for mini-batches
 
+            Guid filePrefix = Guid.NewGuid();
+
             for (int i = 0; i < epochs; i++)
             {
                 Console.WriteLine("Epoch: {0}", i);
@@ -97,6 +104,10 @@ namespace SimpleNeuralNetworkLibrary
                 RecalculateCost(dataSource);
 
                 Console.WriteLine("Average cost is now: {0}", AverageCost);
+
+                string fileName = string.Format("{0}-{1}.ann");
+                Console.WriteLine("Saving network to file: {0}", fileName);
+                Save(fileName);
             }
         }
 
@@ -256,6 +267,75 @@ namespace SimpleNeuralNetworkLibrary
             var outputs = Layers[Layers.Count - 1].AllOutputs();
 
             return outputs;
+        }
+
+        public void Save(string fileName)
+        {
+            using (var stream = new FileStream(fileName, FileMode.Create))
+            {
+                using (var writer = new BinaryWriter(stream))
+                {
+                    writer.Write(_config.InputDimensions);
+                    writer.Write(_config.NeuronCounts.Length);
+
+                    foreach (var neuronCount in _config.NeuronCounts)
+                        writer.Write(neuronCount);
+
+                    writer.Write(_config.LearningRate);
+                    writer.Write((int)_config.ActivationType);
+
+                    foreach (var layer in Layers)
+                    {
+                        foreach (var neuron in layer.Neurons)
+                        {
+                            foreach (var incomingConnection in neuron.IncomingConnections)
+                            {
+                                writer.Write(incomingConnection.Weight);
+                            }
+                        }
+                    }
+
+                    writer.Close();
+                }
+            }
+        }
+
+        public static ArtificialNeuralNetwork Load(string fileName)
+        {
+            ArtificialNeuralNetwork ann = null;
+
+            using (var stream = new FileStream(fileName, FileMode.Open))
+            {
+                using (var reader = new BinaryReader(stream))
+                {
+                    ArtificialNeuralNetworkConfig config = new ArtificialNeuralNetworkConfig();
+                    config.InputDimensions = reader.ReadInt32();
+                    config.NeuronCounts = new int[reader.ReadInt32()];
+
+                    for (var i = 0; i < config.NeuronCounts.Length; i++)
+                        config.NeuronCounts[i] = reader.ReadInt32();
+
+                    config.LearningRate = reader.ReadDouble();
+                    config.ActivationType = (ActivationTypes)reader.ReadInt32();
+
+                    ann = new ArtificialNeuralNetwork(config);
+
+                    foreach (var layer in ann.Layers)
+                    {
+                        foreach (var neuron in layer.Neurons)
+                        {
+                            foreach (var incomingConnection in neuron.IncomingConnections)
+                            {
+                                incomingConnection.Weight = reader.ReadDouble();
+                            }
+                        }
+                    }
+
+                    reader.Close();
+                }
+            }
+
+            return ann;
         }
     }
 }
