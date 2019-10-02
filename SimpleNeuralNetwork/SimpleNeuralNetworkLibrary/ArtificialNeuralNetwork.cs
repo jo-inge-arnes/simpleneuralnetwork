@@ -105,7 +105,7 @@ namespace SimpleNeuralNetworkLibrary
 
                 Console.WriteLine("Average cost is now: {0}", AverageCost);
 
-                string fileName = string.Format("{0}-{1}.ann");
+                string fileName = string.Format("{0}-{1}.ann", filePrefix, i);
                 Console.WriteLine("Saving network to file: {0}", fileName);
                 Save(fileName);
             }

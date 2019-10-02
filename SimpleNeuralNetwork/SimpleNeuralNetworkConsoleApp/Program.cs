@@ -100,12 +100,15 @@ namespace SimpleNeuralNetworkConsoleApp
 
         static MnistDataSource InitMnistDataSource()
         {
-            var dataSource = new MnistDataSource(
-                @"E:\data\train-images-idx3-ubyte.gz",
-                @"E:\data\train-labels-idx1-ubyte.gz");
+            var folderPath = @"C:\Projects\simpleneuralnetwork\mnist_data\";
 
-            dataSource.InputDimensions = 28 * 28;
-            dataSource.OutputDimensions = 10;
+            var dataSource = new MnistDataSource(
+                folderPath + "train-images-idx3-ubyte.gz",
+                folderPath + "train-labels-idx1-ubyte.gz")
+            {
+                InputDimensions = 28 * 28,
+                OutputDimensions = 10
+            };
 
             return dataSource;
         }
