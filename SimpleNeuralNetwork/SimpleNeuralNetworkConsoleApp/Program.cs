@@ -14,30 +14,67 @@ namespace SimpleNeuralNetworkConsoleApp
         static void Main(string[] args)
         {
             //var dataSource = InitSingleValueDataSource();
-            var dataSource = InitMnistDataSource();
             // var dataSource = InitListDataSource();
 
-            var config = new ArtificialNeuralNetworkConfig
+            var dataSource = InitMnistDataSource();
+
+            //var config = new ArtificialNeuralNetworkConfig
+            //{
+            //    InputDimensions = dataSource.InputDimensions,
+            //    NeuronCounts = new int[] { 32, dataSource.OutputDimensions },
+            //    LearningRate = 0.001,
+            //    ActivationType = ActivationTypes.ReLU
+            //};
+
+            //var ann = new ArtificialNeuralNetwork(config);
+
+            var ann = ArtificialNeuralNetwork.Load(@"C:\Projects\simpleneuralnetwork\f8ab4b41-74a9-4434-9cfe-c8b30dae3964-67-p-0,0977584296303944.ann");
+            ann.LearningRate = 0.00001;
+            ann.Train(dataSource, 300);
+
+
+
+            //var ann = ArtificialNeuralNetwork.Load(@"C:\Projects\simpleneuralnetwork\00964793-b10e-4b8d-adb9-9f4c30479666-295.ann");
+
+            //CalculatePercentCorrect(ann);
+        }
+
+
+        static void CalculatePercentCorrect(ArtificialNeuralNetwork ann)
+        {
+            var testDataSource = InitMnistTesttDataSource();
+            int numPoints = 0;
+            int numCorrect = 0;
+
+            foreach (var dataPoint in testDataSource.DataPoints)
             {
-                InputDimensions = dataSource.InputDimensions,
-                NeuronCounts = new int[] { 32, dataSource.OutputDimensions },
-                LearningRate = 0.001,
-                ActivationType = ActivationTypes.ReLU
-            };
+                numPoints++;
+                var estimated = ann.Classify(dataPoint);
+                var expected = dataPoint.Label;
 
-            var ann = new ArtificialNeuralNetwork(config);
+                if (getClass(estimated) == getClass(expected))
+                    numCorrect++;
+            }
 
-            //ManuallyInitWeightsForSingleValueSource(ann);
+            Console.WriteLine("Percent correct: {0}", (100.0 * numCorrect) / (double)numPoints);
+        }
 
-            //var fileName = Guid.NewGuid().ToString() + "-Testing.ann";
-            //ann.Save(fileName);
-            //var ann2 = ArtificialNeuralNetwork.Load(fileName);
+        static int getClass(double[] outputs)
+        {
+            int indexClosestToOne = -1;
+            double closestSquaredDistance = double.MaxValue;
 
-            //var initialResult = ann.Classify(dataSource.DataPointList[0]);
-            //ann.RecalculateCost(dataSource);
-            //Console.WriteLine("Initial cost: {0}", ann.AverageCost);
+            for (int i = 0; i < outputs.Length; i++)
+            {
+                double squaredDistance = Math.Pow(outputs[i] - 1.0, 2);
+                if (squaredDistance < closestSquaredDistance)
+                {
+                    indexClosestToOne = i;
+                    closestSquaredDistance = squaredDistance;
+                }
+            }            
 
-            ann.Train(dataSource, 50);
+            return indexClosestToOne;
         }
 
         static ListDataSource InitSingleValueDataSource()
@@ -100,11 +137,26 @@ namespace SimpleNeuralNetworkConsoleApp
 
         static MnistDataSource InitMnistDataSource()
         {
-            var folderPath = @"C:\Projects\simpleneuralnetwork\mnist_data\";
+            var folderPath = @"C:\Datasets\JPG-PNG-to-MNIST-NN-Format\"; // @"C:\Projects\simpleneuralnetwork\mnist_data\";
 
             var dataSource = new MnistDataSource(
                 folderPath + "train-images-idx3-ubyte.gz",
                 folderPath + "train-labels-idx1-ubyte.gz")
+            {
+                InputDimensions = 28 * 28,
+                OutputDimensions = 10
+            };
+
+            return dataSource;
+        }
+
+        static MnistDataSource InitMnistTesttDataSource()
+        {
+            var folderPath = @"C:\Datasets\JPG-PNG-to-MNIST-NN-Format\"; // @"C:\Projects\simpleneuralnetwork\mnist_data\";
+
+            var dataSource = new MnistDataSource(
+                folderPath + "test-images-idx3-ubyte.gz",
+                folderPath + "test-labels-idx1-ubyte.gz")
             {
                 InputDimensions = 28 * 28,
                 OutputDimensions = 10
