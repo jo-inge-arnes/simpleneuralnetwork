@@ -1,11 +1,11 @@
-﻿using MNIST.IO;
-using SimpleNeuralNetworkLibrary;
+﻿using SimpleNeuralNetworkLibrary;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MNIST.IO;
 
 namespace SimpleNeuralNetworkConsoleApp
 {

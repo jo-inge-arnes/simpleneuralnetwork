@@ -27,18 +27,20 @@ namespace SimpleNeuralNetworkConsoleApp
             //};
 
             //var ann = new ArtificialNeuralNetwork(config);
+            var dir = @"C:\Projects\simpleneuralnetwork\";
+            var filename = "d58b64a6-fccb-4662-8aa8-a1c4169dfa03-1235-p-0,0674167965245353.ann";
+            var fullPath = dir + filename;
 
-            var ann = ArtificialNeuralNetwork.Load(@"C:\Projects\simpleneuralnetwork\f8ab4b41-74a9-4434-9cfe-c8b30dae3964-67-p-0,0977584296303944.ann");
+            var ann = ArtificialNeuralNetwork.Load(fullPath);
             ann.LearningRate = 0.00001;
-            ann.Train(dataSource, 300);
+            ann.Train(dataSource, 10000);
 
-
-
-            //var ann = ArtificialNeuralNetwork.Load(@"C:\Projects\simpleneuralnetwork\00964793-b10e-4b8d-adb9-9f4c30479666-295.ann");
-
+            //var ann = ArtificialNeuralNetwork.Load(fullPath);
             //CalculatePercentCorrect(ann);
-        }
 
+            Console.WriteLine("Press <enter> to quit...");
+            Console.ReadLine();
+        }
 
         static void CalculatePercentCorrect(ArtificialNeuralNetwork ann)
         {
@@ -46,17 +48,41 @@ namespace SimpleNeuralNetworkConsoleApp
             int numPoints = 0;
             int numCorrect = 0;
 
+            var classCounts = new Dictionary<int, (int numCorrect, int numTotal)>();  
+
             foreach (var dataPoint in testDataSource.DataPoints)
             {
                 numPoints++;
                 var estimated = ann.Classify(dataPoint);
                 var expected = dataPoint.Label;
 
-                if (getClass(estimated) == getClass(expected))
+                var classEstimated = getClass(estimated);
+                var classExpected = getClass(expected);
+
+                var classCountsTouple =
+                    classCounts.TryGetValue(classExpected, out var touple) ? touple : (numCorrect: 0, numTotal: 0);
+                    
+                classCountsTouple.numTotal++;
+
+                if (classEstimated == classExpected)
+                {
                     numCorrect++;
+                    classCountsTouple.numCorrect++;
+                }
+
+                classCounts[classExpected] = classCountsTouple;
             }
 
             Console.WriteLine("Percent correct: {0}", (100.0 * numCorrect) / (double)numPoints);
+            for (int i = 0; i < 10; i++)
+            {
+                var classCountsTouple =
+                    classCounts.TryGetValue(i, out var touple) ? touple : (numCorrect: 0, numTotal: 0);
+
+                var percent = 100.0 * classCountsTouple.numCorrect / (double)classCountsTouple.numTotal;
+                
+                Console.WriteLine("{0}: {1}", i, percent);
+            }
         }
 
         static int getClass(double[] outputs)
