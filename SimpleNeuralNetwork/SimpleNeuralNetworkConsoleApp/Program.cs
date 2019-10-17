@@ -28,7 +28,7 @@ namespace SimpleNeuralNetworkConsoleApp
 
             //var ann = new ArtificialNeuralNetwork(config);
             var dir = @"C:\Projects\simpleneuralnetwork\";
-            var filename = "d58b64a6-fccb-4662-8aa8-a1c4169dfa03-1235-p-0,0674167965245353.ann";
+            var filename = "dc1cc91c-aa52-4aae-ac68-582c3c7d9f8c-593-p-0,0626084964120264.ann";
             var fullPath = dir + filename;
 
             var ann = ArtificialNeuralNetwork.Load(fullPath);
