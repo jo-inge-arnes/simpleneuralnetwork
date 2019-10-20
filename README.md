@@ -1,7 +1,7 @@
 # simpleneuralnetwork
 A simple neural network implementation
 
-Note that the MNIST-files in this repository is not really MNIST but a much more difficult dataset.
+Note that the MNIST-files in this repository is not really MNIST but a much more difficult dataset. The currently checked in learning rate in the console application is also very low.
 
 The neural network supports both ReLU and sigmoid activation functions. For ReLU, He-initialization is used for generating the initial weights. The models can be saved and loaded. The backpropagation training works well. 
 
