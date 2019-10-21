@@ -1,5 +1,5 @@
 # simpleneuralnetwork
-A simple neural network implementation
+A simple neural network implementation including backpropagation.
 
 Note that the MNIST-files in this repository is not really MNIST but a much more difficult dataset. The currently checked in learning rate in the console application is also very low.
 
