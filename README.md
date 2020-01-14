@@ -7,7 +7,7 @@ The neural network supports both ReLU and sigmoid activation functions. For ReLU
 
 However, the code is just straight forward with no attempt to make it efficient what-so-ever. 
 
-The code for the application is very messy.
+The code for the application is messy at the moment.
 
 
 
